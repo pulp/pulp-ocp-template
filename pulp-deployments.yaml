@@ -1,0 +1,461 @@
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      email: pulp-dev@redhat.com
+      ignore-check.kube-linter.io/no-node-affinity: Do not check node affinity
+    labels:
+      app: pulp-api
+      app.kubernetes.io/component: api
+      app.kubernetes.io/instance: pulp-api-example-pulp
+      app.kubernetes.io/managed-by: pulp-operator
+      app.kubernetes.io/name: pulp-api
+      app.kubernetes.io/part-of: pulp
+      owner: pulp-dev
+      pulp_cr: example-pulp
+    name: example-pulp-api
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pulp-api
+        app.kubernetes.io/component: api
+        app.kubernetes.io/instance: pulp-api-example-pulp
+        app.kubernetes.io/managed-by: pulp-operator
+        app.kubernetes.io/name: pulp-api
+        app.kubernetes.io/part-of: pulp
+        pulp_cr: example-pulp
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: pulp-api
+          app.kubernetes.io/component: api
+          app.kubernetes.io/instance: pulp-api-example-pulp
+          app.kubernetes.io/managed-by: pulp-operator
+          app.kubernetes.io/name: pulp-api
+          app.kubernetes.io/part-of: pulp
+          pulp_cr: example-pulp
+      spec:
+        affinity: {}
+        containers:
+        - args:
+          - pulp-api
+          env:
+          - name: PULP_GUNICORN_TIMEOUT
+            value: "90"
+          - name: PULP_API_WORKERS
+            value: "2"
+          - name: POSTGRES_SERVICE_HOST
+            value: example-pulp-database-svc
+          - name: POSTGRES_SERVICE_PORT
+            value: "5432"
+          image: quay.io/pulp/pulp-minimal:latest
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /pulp/api/v3/status/
+              port: 24817
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 10
+          name: api
+          ports:
+          - containerPort: 24817
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /usr/bin/readyz.py
+              - /pulp/api/v3/status/
+            failureThreshold: 10
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/pulp/settings.py
+            name: example-pulp-server
+            readOnly: true
+            subPath: settings.py
+          - mountPath: /etc/pulp/pulp-admin-password
+            name: example-pulp-admin-password
+            readOnly: true
+            subPath: admin-password
+          - mountPath: /etc/pulp/keys/database_fields.symmetric.key
+            name: example-pulp-db-fields-encryption
+            readOnly: true
+            subPath: database_fields.symmetric.key
+          - mountPath: /var/lib/pulp/tmp
+            name: tmp-file-storage
+          - mountPath: /var/lib/pulp/assets
+            name: assets-file-storage
+          - mountPath: /etc/pulp/keys/container_auth_private_key.pem
+            name: example-pulp-container-auth-certs
+            readOnly: true
+            subPath: container_auth_private_key.pem
+          - mountPath: /etc/pulp/keys/container_auth_public_key.pem
+            name: example-pulp-container-auth-certs
+            readOnly: true
+            subPath: container_auth_pulblic_key.pem
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: example-pulp
+        serviceAccountName: example-pulp
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: example-pulp-server
+          secret:
+            defaultMode: 420
+            items:
+            - key: settings.py
+              path: settings.py
+            secretName: example-pulp-server
+        - name: example-pulp-admin-password
+          secret:
+            defaultMode: 420
+            items:
+            - key: password
+              path: admin-password
+            secretName: example-pulp-admin-password
+        - name: example-pulp-db-fields-encryption
+          secret:
+            defaultMode: 420
+            items:
+            - key: database_fields.symmetric.key
+              path: database_fields.symmetric.key
+            secretName: example-pulp-db-fields-encryption
+        - emptyDir: {}
+          name: tmp-file-storage
+        - emptyDir: {}
+          name: assets-file-storage
+        - name: example-pulp-container-auth-certs
+          secret:
+            defaultMode: 420
+            items:
+            - key: container_auth_public_key.pem
+              path: container_auth_public_key.pem
+            - key: container_auth_private_key.pem
+              path: container_auth_private_key.pem
+            secretName: example-pulp-container-auth
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+    labels:
+      app: pulp-content
+      app.kubernetes.io/component: content
+      app.kubernetes.io/instance: pulp-content-example-pulp
+      app.kubernetes.io/managed-by: pulp-operator
+      app.kubernetes.io/name: pulp-content
+      app.kubernetes.io/part-of: pulp
+      owner: pulp-dev
+      pulp_cr: example-pulp
+    name: example-pulp-content
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pulp-content
+        app.kubernetes.io/component: content
+        app.kubernetes.io/instance: pulp-content-example-pulp
+        app.kubernetes.io/managed-by: pulp-operator
+        app.kubernetes.io/name: pulp-content
+        app.kubernetes.io/part-of: pulp
+        pulp_cr: example-pulp
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: pulp-content
+          app.kubernetes.io/component: content
+          app.kubernetes.io/instance: pulp-content-example-pulp
+          app.kubernetes.io/managed-by: pulp-operator
+          app.kubernetes.io/name: pulp-content
+          app.kubernetes.io/part-of: pulp
+          pulp_cr: example-pulp
+      spec:
+        affinity: {}
+        containers:
+        - args:
+          - pulp-content
+          env:
+          - name: PULP_GUNICORN_TIMEOUT
+            value: "90"
+          - name: PULP_CONTENT_WORKERS
+            value: "2"
+          - name: POSTGRES_SERVICE_HOST
+            value: example-pulp-database-svc
+          - name: POSTGRES_SERVICE_PORT
+            value: "5432"
+          image: quay.io/pulp/pulp-minimal:latest
+          imagePullPolicy: IfNotPresent
+          name: content
+          ports:
+          - containerPort: 24816
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /usr/bin/readyz.py
+              - /pulp/content/
+            failureThreshold: 10
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/pulp/settings.py
+            name: example-pulp-server
+            readOnly: true
+            subPath: settings.py
+          - mountPath: /etc/pulp/keys/database_fields.symmetric.key
+            name: example-pulp-db-fields-encryption
+            readOnly: true
+            subPath: database_fields.symmetric.key
+          - mountPath: /var/lib/pulp/tmp
+            name: tmp-file-storage
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: example-pulp
+        serviceAccountName: example-pulp
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: example-pulp-server
+          secret:
+            defaultMode: 420
+            items:
+            - key: settings.py
+              path: settings.py
+            secretName: example-pulp-server
+        - name: example-pulp-db-fields-encryption
+          secret:
+            defaultMode: 420
+            items:
+            - key: database_fields.symmetric.key
+              path: database_fields.symmetric.key
+            secretName: example-pulp-db-fields-encryption
+        - emptyDir: {}
+          name: tmp-file-storage
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+    labels:
+      app.kubernetes.io/component: webserver
+      app.kubernetes.io/instance: nginx-example-pulp
+      app.kubernetes.io/managed-by: pulp-operator
+      app.kubernetes.io/name: nginx
+      app.kubernetes.io/part-of: pulp
+      owner: pulp-dev
+    name: example-pulp-web
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: webserver
+        app.kubernetes.io/instance: nginx-example-pulp
+        app.kubernetes.io/managed-by: pulp-operator
+        app.kubernetes.io/name: nginx
+        app.kubernetes.io/part-of: pulp
+        pulp_cr: example-pulp
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/component: webserver
+          app.kubernetes.io/instance: nginx-example-pulp
+          app.kubernetes.io/managed-by: pulp-operator
+          app.kubernetes.io/name: nginx
+          app.kubernetes.io/part-of: pulp
+          pulp_cr: example-pulp
+      spec:
+        containers:
+        - env:
+          - name: NODE_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.hostIP
+          image: quay.io/pulp/pulp-web:latest
+          imagePullPolicy: Always
+          name: web
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /pulp/api/v3/status/
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 150
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 10
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/nginx/nginx.conf
+            name: example-pulp-nginx-conf
+            readOnly: true
+            subPath: nginx.conf
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: example-pulp
+        serviceAccountName: example-pulp
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: nginx.conf
+              path: nginx.conf
+            name: example-pulp-configmap
+          name: example-pulp-nginx-conf
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+    labels:
+      app.kubernetes.io/component: worker
+      app.kubernetes.io/instance: pulp-worker-example-pulp
+      app.kubernetes.io/managed-by: pulp-operator
+      app.kubernetes.io/name: pulp-worker
+      app.kubernetes.io/part-of: pulp
+      owner: pulp-dev
+    name: example-pulp-worker
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: pulp-worker
+        app.kubernetes.io/component: worker
+        app.kubernetes.io/instance: pulp-worker-example-pulp
+        app.kubernetes.io/managed-by: pulp-operator
+        app.kubernetes.io/name: pulp-worker
+        app.kubernetes.io/part-of: pulp
+        pulp_cr: example-pulp
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: pulp-worker
+          app.kubernetes.io/component: worker
+          app.kubernetes.io/instance: pulp-worker-example-pulp
+          app.kubernetes.io/managed-by: pulp-operator
+          app.kubernetes.io/name: pulp-worker
+          app.kubernetes.io/part-of: pulp
+          pulp_cr: example-pulp
+      spec:
+        affinity: {}
+        containers:
+        - args:
+          - pulp-worker
+          env:
+          - name: POSTGRES_SERVICE_HOST
+            value: example-pulp-database-svc
+          - name: POSTGRES_SERVICE_PORT
+            value: "5432"
+          image: quay.io/pulp/pulp-minimal:latest
+          imagePullPolicy: IfNotPresent
+          name: worker
+          readinessProbe:
+            exec:
+              command:
+              - /usr/bin/wait_on_postgres.py
+            failureThreshold: 10
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /.ansible/tmp
+            name: example-pulp-ansible-tmp
+          - mountPath: /etc/pulp/settings.py
+            name: example-pulp-server
+            readOnly: true
+            subPath: settings.py
+          - mountPath: /etc/pulp/keys/database_fields.symmetric.key
+            name: example-pulp-db-fields-encryption
+            readOnly: true
+            subPath: database_fields.symmetric.key
+          - mountPath: /var/lib/pulp/tmp
+            name: tmp-file-storage
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: example-pulp
+        serviceAccountName: example-pulp
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: example-pulp-server
+          secret:
+            defaultMode: 420
+            items:
+            - key: settings.py
+              path: settings.py
+            secretName: example-pulp-server
+        - name: example-pulp-db-fields-encryption
+          secret:
+            defaultMode: 420
+            items:
+            - key: database_fields.symmetric.key
+              path: database_fields.symmetric.key
+            secretName: example-pulp-db-fields-encryption
+        - emptyDir: {}
+          name: example-pulp-ansible-tmp
+        - emptyDir: {}
+          name: tmp-file-storage

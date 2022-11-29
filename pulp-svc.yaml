@@ -1,0 +1,119 @@
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: pulp-api
+      app.kubernetes.io/component: api
+      app.kubernetes.io/instance: pulp-api-example-pulp
+      app.kubernetes.io/managed-by: pulp-operator
+      app.kubernetes.io/name: pulp-api
+      app.kubernetes.io/part-of: pulp
+      pulp_cr: example-pulp
+    name: example-pulp-api-svc
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: api-24817
+      port: 24817
+      protocol: TCP
+      targetPort: 24817
+    publishNotReadyAddresses: true
+    selector:
+      app: pulp-api
+      app.kubernetes.io/component: api
+      app.kubernetes.io/instance: pulp-api-example-pulp
+      app.kubernetes.io/managed-by: pulp-operator
+      app.kubernetes.io/name: pulp-api
+      app.kubernetes.io/part-of: pulp
+      pulp_cr: example-pulp
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: pulp-content
+      app.kubernetes.io/component: content
+      app.kubernetes.io/instance: pulp-content-example-pulp
+      app.kubernetes.io/managed-by: pulp-operator
+      app.kubernetes.io/name: pulp-content
+      app.kubernetes.io/part-of: pulp
+      pulp_cr: example-pulp
+    name: example-pulp-content-svc
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: content-24816
+      port: 24816
+      protocol: TCP
+      targetPort: 24816
+    publishNotReadyAddresses: true
+    selector:
+      app: pulp-content
+      app.kubernetes.io/component: content
+      app.kubernetes.io/instance: pulp-content-example-pulp
+      app.kubernetes.io/managed-by: pulp-operator
+      app.kubernetes.io/name: pulp-content
+      app.kubernetes.io/part-of: pulp
+      pulp_cr: example-pulp
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: example-pulp-database-svc
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      app: postgresql
+      pulp_cr: example-pulp
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app.kubernetes.io/component: webserver
+      app.kubernetes.io/instance: nginx-example-pulp
+      app.kubernetes.io/managed-by: pulp-operator
+      app.kubernetes.io/name: nginx
+      app.kubernetes.io/part-of: pulp
+      pulp_cr: example-pulp
+    name: example-pulp-web-svc
+  spec:
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: web-8080
+      nodePort: 31012
+      port: 24880
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app.kubernetes.io/component: webserver
+      app.kubernetes.io/instance: nginx-example-pulp
+      app.kubernetes.io/managed-by: pulp-operator
+      app.kubernetes.io/name: nginx
+      app.kubernetes.io/part-of: pulp
+      pulp_cr: example-pulp
+    sessionAffinity: None
+    type: NodePort

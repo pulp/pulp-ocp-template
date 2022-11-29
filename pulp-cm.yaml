@@ -1,0 +1,40 @@
+apiVersion: v1
+data:
+  nginx.conf: "\nerror_log /dev/stdout info;\nworker_processes 1;\nevents {\n\tworker_connections
+    1024;  # increase if you have lots of clients\n\taccept_mutex off;  # set to 'on'
+    if nginx worker_processes > 1\n}\n\nhttp {\n\taccess_log /dev/stdout;\n\tinclude
+    mime.types;\n\t# fallback in case we can't determine a type\n\tdefault_type application/octet-stream;\n\tsendfile
+    on;\n\n\t# If left at the default of 1024, nginx emits a warning about being unable\n\t#
+    to build optimal hash types.\n\ttypes_hash_max_size 4096;\n\n\tupstream pulp-content
+    {\n\t\tserver example-pulp-content-svc:24816;\n\t}\n\n\tupstream pulp-api {\n\t\tserver
+    example-pulp-api-svc:24817;\n\t}\n\n\tserver {\n\n\t\t# Gunicorn docs suggest
+    the use of the \"deferred\" directive on Linux.\n\t\tlisten 8080 default_server
+    deferred;\n\t\tlisten [::]:8080 default_server deferred;\n\n\t\t# If you have
+    a domain name, this is where to add it\n\t\tserver_name $hostname;\n\n\t\tproxy_read_timeout
+    120s;\n\t\tproxy_connect_timeout 120s;\n\t\tproxy_send_timeout 120s;\n\n\t\t#
+    The default client_max_body_size is 1m. Clients uploading\n\t\t# files larger
+    than this will need to chunk said files.\n\t\tclient_max_body_size 10m;\n\n\t\t#
+    Gunicorn docs suggest this value.\n\t\tkeepalive_timeout 5;\n\n\t\t# static files
+    that can change dynamically, or are needed for TLS\n\t\t# purposes are served
+    through the webserver.\n\t\troot \"/opt/app-root/src\";\n\n\t\tlocation /pulp/content/
+    {\n\t\t\tproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\t\t\tproxy_set_header
+    X-Forwarded-Proto $scheme;\n\t\t\tproxy_set_header Host $http_host;\n\t\t\t# we
+    don't want nginx trying to do something clever with\n\t\t\t# redirects, we set
+    the Host: header above already.\n\t\t\tproxy_redirect off;\n\t\t\tproxy_pass http://pulp-content;\n\t\t}\n\n\t\tlocation
+    /pulp/api/v3/ {\n\t\t\tproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\t\t\tproxy_set_header
+    X-Forwarded-Proto $scheme;\n\t\t\tproxy_set_header Host $http_host;\n\t\t\t# we
+    don't want nginx trying to do something clever with\n\t\t\t# redirects, we set
+    the Host: header above already.\n\t\t\tproxy_redirect off;\n\t\t\tproxy_pass http://pulp-api;\n\t\t}\n\n\t\tlocation
+    /auth/login/ {\n\t\t\tproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\t\t\tproxy_set_header
+    X-Forwarded-Proto $scheme;\n\t\t\tproxy_set_header Host $http_host;\n\t\t\t# we
+    don't want nginx trying to do something clever with\n\t\t\t# redirects, we set
+    the Host: header above already.\n\t\t\tproxy_redirect off;\n\t\t\tproxy_pass http://pulp-api;\n\t\t}\n\n\t\tinclude
+    /opt/app-root/etc/nginx.default.d/*.conf;\n\n\t\tlocation / {\n\t\t\tproxy_set_header
+    X-Forwarded-For $proxy_add_x_forwarded_for;\n\t\t\tproxy_set_header X-Forwarded-Proto
+    $scheme;\n\t\t\tproxy_set_header Host $http_host;\n\t\t\t# we don't want nginx
+    trying to do something clever with\n\t\t\t# redirects, we set the Host: header
+    above already.\n\t\t\tproxy_redirect off;\n\t\t\tproxy_pass http://pulp-api;\n\t\t\t#
+    static files are served through whitenoise - http://whitenoise.evans.io/en/stable/\n\t\t}\n\t}\n}\n\t\t\t"
+kind: ConfigMap
+metadata:
+  name: example-pulp-configmap

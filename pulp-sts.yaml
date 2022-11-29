@@ -1,0 +1,130 @@
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    labels:
+      app.kubernetes.io/component: database
+      app.kubernetes.io/instance: postgres-example-pulp
+      app.kubernetes.io/managed-by: pulp-operator
+      app.kubernetes.io/name: postgres
+      app.kubernetes.io/part-of: pulp
+      owner: pulp-dev
+    name: example-pulp-database
+  spec:
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: postgresql
+        app.kubernetes.io/component: database
+        app.kubernetes.io/instance: postgres-example-pulp
+        app.kubernetes.io/managed-by: pulp-operator
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/part-of: pulp
+        owner: pulp-dev
+        pulp_cr: example-pulp
+    serviceName: ""
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: postgresql
+          app.kubernetes.io/component: database
+          app.kubernetes.io/instance: postgres-example-pulp
+          app.kubernetes.io/managed-by: pulp-operator
+          app.kubernetes.io/name: postgres
+          app.kubernetes.io/part-of: pulp
+          owner: pulp-dev
+          pulp_cr: example-pulp
+      spec:
+        affinity: {}
+        containers:
+        - env:
+          - name: POSTGRESQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+                key: database
+                name: example-pulp-postgres-configuration
+          - name: POSTGRESQL_USER
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: example-pulp-postgres-configuration
+          - name: POSTGRESQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: example-pulp-postgres-configuration
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                key: database
+                name: example-pulp-postgres-configuration
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: example-pulp-postgres-configuration
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: example-pulp-postgres-configuration
+          - name: PGDATA
+            value: /var/lib/postgresql/data/pgdata
+          - name: POSTGRES_INITDB_ARGS
+            value: --auth-host=scram-sha-256
+          - name: POSTGRES_HOST_AUTH_METHOD
+            value: scram-sha-256
+          image: docker.io/library/postgres:13
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -i
+              - -c
+              - pg_isready -U pulp -h 127.0.0.1 -p 5432
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: postgres
+          ports:
+          - containerPort: 5432
+            name: postgres
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -i
+              - -c
+              - pg_isready -U pulp -h 127.0.0.1 -p 5432
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgres
+            subPath: pgdata
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: example-pulp
+        serviceAccountName: example-pulp
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir: {}
+          name: postgres
+    updateStrategy:
+      rollingUpdate:
+        partition: 0
+      type: RollingUpdate
