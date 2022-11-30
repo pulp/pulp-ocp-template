@@ -1,0 +1,430 @@
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 180s
+    creationTimestamp: "2022-11-30T10:40:58Z"
+    labels:
+      owner: pulp-dev
+      pulp_cr: example-pulp
+    name: example-pulp
+    namespace: pulp
+    ownerReferences:
+    - apiVersion: repo-manager.pulpproject.org/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Pulp
+      name: example-pulp
+      uid: 904d594e-1168-48fd-9207-369e2228ba27
+    resourceVersion: "6069240"
+    uid: fbe75eff-b021-4034-ac5f-c945c3163187
+  spec:
+    host: example-pulp.apps-crc.testing
+    path: /
+    port:
+      targetPort: api-24817
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: example-pulp-api-svc
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2022-11-30T10:40:58Z"
+        status: "True"
+        type: Admitted
+      host: example-pulp.apps-crc.testing
+      routerCanonicalHostname: router-default.apps-crc.testing
+      routerName: default
+      wildcardPolicy: None
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 180s
+    creationTimestamp: "2022-11-30T10:40:58Z"
+    labels:
+      owner: pulp-dev
+      pulp_cr: example-pulp
+    name: example-pulp-ansible-pulp-ansible-galaxy
+    namespace: pulp
+    ownerReferences:
+    - apiVersion: repo-manager.pulpproject.org/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Pulp
+      name: example-pulp
+      uid: 904d594e-1168-48fd-9207-369e2228ba27
+    resourceVersion: "6069241"
+    uid: 09b9c592-29ba-4dce-a91f-8065bc2254f4
+  spec:
+    host: example-pulp.apps-crc.testing
+    path: /pulp_ansible/galaxy/
+    port:
+      targetPort: api-24817
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: example-pulp-api-svc
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2022-11-30T10:40:58Z"
+        status: "True"
+        type: Admitted
+      host: example-pulp.apps-crc.testing
+      routerCanonicalHostname: router-default.apps-crc.testing
+      routerName: default
+      wildcardPolicy: None
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 180s
+    creationTimestamp: "2022-11-30T10:40:58Z"
+    labels:
+      owner: pulp-dev
+      pulp_cr: example-pulp
+    name: example-pulp-api-v3
+    namespace: pulp
+    ownerReferences:
+    - apiVersion: repo-manager.pulpproject.org/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Pulp
+      name: example-pulp
+      uid: 904d594e-1168-48fd-9207-369e2228ba27
+    resourceVersion: "6069245"
+    uid: 6e6611de-8859-4b42-8326-97eed8228756
+  spec:
+    host: example-pulp.apps-crc.testing
+    path: /pulp/api/v3/
+    port:
+      targetPort: api-24817
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: example-pulp-api-svc
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2022-11-30T10:40:58Z"
+        status: "True"
+        type: Admitted
+      host: example-pulp.apps-crc.testing
+      routerCanonicalHostname: router-default.apps-crc.testing
+      routerName: default
+      wildcardPolicy: None
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 180s
+    creationTimestamp: "2022-11-30T10:40:58Z"
+    labels:
+      owner: pulp-dev
+      pulp_cr: example-pulp
+    name: example-pulp-auth
+    namespace: pulp
+    ownerReferences:
+    - apiVersion: repo-manager.pulpproject.org/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Pulp
+      name: example-pulp
+      uid: 904d594e-1168-48fd-9207-369e2228ba27
+    resourceVersion: "6069244"
+    uid: 4b76c9f8-db49-4bea-a841-e92f8449ec2a
+  spec:
+    host: example-pulp.apps-crc.testing
+    path: /auth/login/
+    port:
+      targetPort: api-24817
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: example-pulp-api-svc
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2022-11-30T10:40:58Z"
+        status: "True"
+        type: Admitted
+      host: example-pulp.apps-crc.testing
+      routerCanonicalHostname: router-default.apps-crc.testing
+      routerName: default
+      wildcardPolicy: None
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 180s
+    creationTimestamp: "2022-11-30T10:40:58Z"
+    labels:
+      owner: pulp-dev
+      pulp_cr: example-pulp
+    name: example-pulp-container-extensions-v2
+    namespace: pulp
+    ownerReferences:
+    - apiVersion: repo-manager.pulpproject.org/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Pulp
+      name: example-pulp
+      uid: 904d594e-1168-48fd-9207-369e2228ba27
+    resourceVersion: "6069242"
+    uid: 17d3b500-1ff1-4977-bd80-4e23dd0a5655
+  spec:
+    host: example-pulp.apps-crc.testing
+    path: /extensions/v2/
+    port:
+      targetPort: api-24817
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: example-pulp-api-svc
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2022-11-30T10:40:58Z"
+        status: "True"
+        type: Admitted
+      host: example-pulp.apps-crc.testing
+      routerCanonicalHostname: router-default.apps-crc.testing
+      routerName: default
+      wildcardPolicy: None
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 180s
+    creationTimestamp: "2022-11-30T10:40:58Z"
+    labels:
+      owner: pulp-dev
+      pulp_cr: example-pulp
+    name: example-pulp-container-pulp-container
+    namespace: pulp
+    ownerReferences:
+    - apiVersion: repo-manager.pulpproject.org/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Pulp
+      name: example-pulp
+      uid: 904d594e-1168-48fd-9207-369e2228ba27
+    resourceVersion: "6069249"
+    uid: 8bb46021-bcfe-4647-a764-2a7f5771e338
+  spec:
+    host: example-pulp.apps-crc.testing
+    path: /pulp/container/
+    port:
+      targetPort: content-24816
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: example-pulp-content-svc
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2022-11-30T10:40:58Z"
+        status: "True"
+        type: Admitted
+      host: example-pulp.apps-crc.testing
+      routerCanonicalHostname: router-default.apps-crc.testing
+      routerName: default
+      wildcardPolicy: None
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 180s
+    creationTimestamp: "2022-11-30T10:40:58Z"
+    labels:
+      owner: pulp-dev
+      pulp_cr: example-pulp
+    name: example-pulp-container-token
+    namespace: pulp
+    ownerReferences:
+    - apiVersion: repo-manager.pulpproject.org/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Pulp
+      name: example-pulp
+      uid: 904d594e-1168-48fd-9207-369e2228ba27
+    resourceVersion: "6069246"
+    uid: a549e10d-38e4-4ba9-b0dc-70ae47b0d3a3
+  spec:
+    host: example-pulp.apps-crc.testing
+    path: /token/
+    port:
+      targetPort: api-24817
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: example-pulp-api-svc
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2022-11-30T10:40:58Z"
+        status: "True"
+        type: Admitted
+      host: example-pulp.apps-crc.testing
+      routerCanonicalHostname: router-default.apps-crc.testing
+      routerName: default
+      wildcardPolicy: None
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 180s
+    creationTimestamp: "2022-11-30T10:40:58Z"
+    labels:
+      owner: pulp-dev
+      pulp_cr: example-pulp
+    name: example-pulp-container-v2
+    namespace: pulp
+    ownerReferences:
+    - apiVersion: repo-manager.pulpproject.org/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Pulp
+      name: example-pulp
+      uid: 904d594e-1168-48fd-9207-369e2228ba27
+    resourceVersion: "6069248"
+    uid: e213fb11-b6f2-422a-b1d1-08c947be70c8
+  spec:
+    host: example-pulp.apps-crc.testing
+    path: /v2/
+    port:
+      targetPort: api-24817
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: example-pulp-api-svc
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2022-11-30T10:40:58Z"
+        status: "True"
+        type: Admitted
+      host: example-pulp.apps-crc.testing
+      routerCanonicalHostname: router-default.apps-crc.testing
+      routerName: default
+      wildcardPolicy: None
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 180s
+    creationTimestamp: "2022-11-30T10:40:58Z"
+    labels:
+      owner: pulp-dev
+      pulp_cr: example-pulp
+    name: example-pulp-content
+    namespace: pulp
+    ownerReferences:
+    - apiVersion: repo-manager.pulpproject.org/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Pulp
+      name: example-pulp
+      uid: 904d594e-1168-48fd-9207-369e2228ba27
+    resourceVersion: "6069243"
+    uid: d2d46cbf-7adf-4cb0-b056-62a43e89eba5
+  spec:
+    host: example-pulp.apps-crc.testing
+    path: /pulp/content/
+    port:
+      targetPort: content-24816
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: example-pulp-content-svc
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2022-11-30T10:40:58Z"
+        status: "True"
+        type: Admitted
+      host: example-pulp.apps-crc.testing
+      routerCanonicalHostname: router-default.apps-crc.testing
+      routerName: default
+      wildcardPolicy: None
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 180s
+    creationTimestamp: "2022-11-30T10:40:58Z"
+    labels:
+      owner: pulp-dev
+      pulp_cr: example-pulp
+    name: example-pulp-python-pypi
+    namespace: pulp
+    ownerReferences:
+    - apiVersion: repo-manager.pulpproject.org/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Pulp
+      name: example-pulp
+      uid: 904d594e-1168-48fd-9207-369e2228ba27
+    resourceVersion: "6069247"
+    uid: 1bb80ef0-3242-4f56-bde6-4c4403269dec
+  spec:
+    host: example-pulp.apps-crc.testing
+    path: /pypi/
+    port:
+      targetPort: api-24817
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: example-pulp-api-svc
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2022-11-30T10:40:58Z"
+        status: "True"
+        type: Admitted
+      host: example-pulp.apps-crc.testing
+      routerCanonicalHostname: router-default.apps-crc.testing
+      routerName: default
+      wildcardPolicy: None

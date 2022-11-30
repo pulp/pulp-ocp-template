@@ -9,7 +9,7 @@ This is a template to quick test or try [Pulp](https://pulpproject.org/).
 ## "Registering" the template
 To make this template available we first need to "register" it in `openshift` namespace:
 ```
-$ oc apply -f pulp-template.yaml
+$ oc apply -f https://raw.githubusercontent.com/git-hyagi/pulp-ocp-template/main/pulp-template.yaml
 ```
 This command will create a new template called `pulp-example`.
 > **note**: make sure that you have permissions to create templates in `openshift` namespace
@@ -27,7 +27,8 @@ This command will create a new template called `pulp-example`.
 * A new panel will open on the right side of the screen. Click "*Instatiate Template*"  
 <img src="images/pulp-3.png" width="800">
 
-* The last step is to define in which namespace **Pulp** should be provisioned  
+* The last step is to define in which namespace **Pulp** should be provisioned  and
+the domain to create the routes  
 <img src="images/pulp-4.png" width="800">
 
 <br/>
@@ -53,11 +54,10 @@ $ oc new-app pulp-example
 ```
 $ oc get pods
 NAME                                    READY   STATUS    RESTARTS   AGE
-example-pulp-api-79454fdbf9-7bgv8       1/1     Running   0          3m38s
-example-pulp-content-7cbf4b4589-gnz58   1/1     Running   0          3m38s
-example-pulp-database-0                 1/1     Running   0          3m35s
-example-pulp-web-96cb4cd55-5v2tw        1/1     Running   0          3m38s
-example-pulp-worker-5d7c9685c-7g8rk     1/1     Running   0          3m38s
+example-pulp-api-75c8dcdc55-mfcpt       1/1     Running   0          4m48s
+example-pulp-content-5ffd9d9789-xvvlb   1/1     Running   0          4m48s
+example-pulp-database-0                 1/1     Running   0          4m48s
+example-pulp-worker-58d666d749-d6glq    1/1     Running   0          4m48s
 ```
 
 * check the /status endpoint
@@ -67,5 +67,5 @@ $ oc exec deployment/example-pulp-api -- curl -s localhost:24817/pulp/api/v3/sta
 
 ## Through web console
 
-* from "*Topology*" view all deployments (`api`,`content`,`worker`,`database`,`web`) should be surrounded with a "dark blue" circle  
+* from "*Topology*" view all resources (`api`,`content`,`worker`,`database`) should be surrounded with a "dark blue" circle  
 <img src="images/pulp-5.png" width="800">
