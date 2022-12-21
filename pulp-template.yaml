@@ -659,8 +659,48 @@ objects:
     name: example-pulp-postgres-configuration
   type: Opaque
 - apiVersion: v1
-  data:
-    settings.py: REJfRU5DUllQVElPTl9LRVkgPSAiL2V0Yy9wdWxwL2tleXMvZGF0YWJhc2VfZmllbGRzLnN5bW1ldHJpYy5rZXkiCkdBTEFYWV9DT0xMRUNUSU9OX1NJR05JTkdfU0VSVklDRSA9ICJhbnNpYmxlLWRlZmF1bHQiCkdBTEFYWV9DT05UQUlORVJfU0lHTklOR19TRVJWSUNFID0gImNvbnRhaW5lci1kZWZhdWx0IgpBTlNJQkxFX0FQSV9IT1NUTkFNRSA9ICJodHRwOi8vZXhhbXBsZS1wdWxwLXdlYi1zdmMucHVscC5zdmMuY2x1c3Rlci5sb2NhbDoyNDg4MCIKQU5TSUJMRV9DRVJUU19ESVIgPSAiL2V0Yy9wdWxwL2tleXMvIgpDT05URU5UX09SSUdJTiA9ICJodHRwOi8vZXhhbXBsZS1wdWxwLXdlYi1zdmMucHVscC5zdmMuY2x1c3Rlci5sb2NhbDoyNDg4MCIKREFUQUJBU0VTID0gewoJJ2RlZmF1bHQnOiB7CgkJJ0hPU1QnOiAnZXhhbXBsZS1wdWxwLWRhdGFiYXNlLXN2YycsCgkJJ0VOR0lORSc6ICdkamFuZ28uZGIuYmFja2VuZHMucG9zdGdyZXNxbF9wc3ljb3BnMicsCgkJJ05BTUUnOiAncHVscCcsCgkJJ1VTRVInOiAncHVscCcsCgkJJ1BBU1NXT1JEJzogJ0IwSlNHS214QWROaERucXJ1Y1pwa3VkVzVFcDZQM0kzJywKCQknUE9SVCc6ICc1NDMyJywKCQknQ09OTl9NQVhfQUdFJzogMCwKCQknT1BUSU9OUyc6IHsgJ3NzbG1vZGUnOiAncHJlZmVyJyB9LAoJfQp9CkdBTEFYWV9GRUFUVVJFX0ZMQUdTID0gewoJJ2V4ZWN1dGlvbl9lbnZpcm9ubWVudHMnOiAnVHJ1ZScsCn0KUFJJVkFURV9LRVlfUEFUSCA9ICIvZXRjL3B1bHAva2V5cy9jb250YWluZXJfYXV0aF9wcml2YXRlX2tleS5wZW0iClBVQkxJQ19LRVlfUEFUSCA9ICIvZXRjL3B1bHAva2V5cy9jb250YWluZXJfYXV0aF9wdWJsaWNfa2V5LnBlbSIKU1RBVElDX1JPT1QgPSAiL3Zhci9saWIvb3BlcmF0b3Ivc3RhdGljLyIKVE9LRU5fQVVUSF9ESVNBQkxFRCA9ICJGYWxzZSIKVE9LRU5fU0VSVkVSID0gImh0dHA6Ly9leGFtcGxlLXB1bHAtYXBpLXN2Yy5wdWxwLnN2Yy5jbHVzdGVyLmxvY2FsOjI0ODE3L3Rva2VuLyIKVE9LRU5fU0lHTkFUVVJFX0FMR09SSVRITSA9ICJFUzI1NiIKQUxMT1dFRF9FWFBPUlRfUEFUSFMgPSAiWy90bXBdIgpBTExPV0VEX0lNUE9SVF9QQVRIUyA9ICJbL3RtcF0iCkFQSV9ST09UID0gIi9wdWxwLyIKVEVMRU1FVFJZID0gImZhbHNlIgo=
+  stringData:
+    settings.py: |-
+      DB_ENCRYPTION_KEY = "/etc/pulp/keys/database_fields.symmetric.key"
+      GALAXY_COLLECTION_SIGNING_SERVICE = "ansible-default"
+      GALAXY_CONTAINER_SIGNING_SERVICE = "container-default"
+      ANSIBLE_API_HOSTNAME = "https://${APP}.${DOMAIN}"
+      ANSIBLE_CERTS_DIR = "/etc/pulp/keys/"
+      CONTENT_ORIGIN = "https://${APP}.${DOMAIN}"
+      DATABASES = {
+              'default': {
+                      'HOST': 'postgres.db.svc.cluster.local',
+                      'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                      'NAME': 'pulp',
+                      'USER': 'pulp-admin',
+                      'PASSWORD': 'password',
+                      'PORT': '5432',
+                      'CONN_MAX_AGE': 0,
+                      'OPTIONS': { 'sslmode': 'prefer' },
+              }
+      }
+      GALAXY_FEATURE_FLAGS = {
+              'execution_environments': 'True',
+      }
+      PRIVATE_KEY_PATH = "/etc/pulp/keys/container_auth_private_key.pem"
+      PUBLIC_KEY_PATH = "/etc/pulp/keys/container_auth_public_key.pem"
+      STATIC_ROOT = "/var/lib/operator/static/"
+      TOKEN_AUTH_DISABLED = "False"
+      TOKEN_SERVER = "http://pulp-api-svc.pulp.svc.cluster.local:24817/token/"
+      TOKEN_SIGNATURE_ALGORITHM = "ES256"
+      API_ROOT = "/pulp/"
+      AWS_ACCESS_KEY_ID = 'AKIAIT2Z5TDYPX3ARJBA'
+      AWS_SECRET_ACCESS_KEY = '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'
+      AWS_STORAGE_BUCKET_NAME = 'pulp3'
+      AWS_S3_REGION_NAME = 'us-east-1'
+      AWS_DEFAULT_ACL = "@none None"
+      S3_USE_SIGV4 = "True"
+      AWS_S3_SIGNATURE_VERSION = "s3v4"
+      AWS_S3_ADDRESSING_STYLE = "path"
+      DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+      MEDIA_ROOT = ""
+      ALLOWED_CONTENT_CHECKSUMS = ["sha1","sha256"]
+      AWS_S3_ENDPOINT_URL = "${OBJECT_STORAGE_HOST}"
   kind: Secret
   metadata:
     name: example-pulp-server
@@ -675,7 +715,7 @@ objects:
       pulp_cr: example-pulp
     name: example-pulp
   spec:
-    host: "example-pulp.${DOMAIN}"
+    host: "${APP}.${DOMAIN}"
     path: /
     port:
       targetPort: api-24817
@@ -697,7 +737,7 @@ objects:
       pulp_cr: example-pulp
     name: example-pulp-ansible-pulp-ansible-galaxy
   spec:
-    host: "example-pulp.${DOMAIN}"
+    host: "${APP}.${DOMAIN}"
     path: /pulp_ansible/galaxy/
     port:
       targetPort: api-24817
@@ -719,7 +759,7 @@ objects:
       pulp_cr: example-pulp
     name: example-pulp-api-v3
   spec:
-    host: "example-pulp.${DOMAIN}"
+    host: "${APP}.${DOMAIN}"
     path: /pulp/api/v3/
     port:
       targetPort: api-24817
@@ -741,7 +781,7 @@ objects:
       pulp_cr: example-pulp
     name: example-pulp-auth
   spec:
-    host: "example-pulp.${DOMAIN}"
+    host: "${APP}.${DOMAIN}"
     path: /auth/login/
     port:
       targetPort: api-24817
@@ -763,7 +803,7 @@ objects:
       pulp_cr: example-pulp
     name: example-pulp-container-extensions-v2
   spec:
-    host: "example-pulp.${DOMAIN}"
+    host: "${APP}.${DOMAIN}"
     path: /extensions/v2/
     port:
       targetPort: api-24817
@@ -785,7 +825,7 @@ objects:
       pulp_cr: example-pulp
     name: example-pulp-container-pulp-container
   spec:
-    host: "example-pulp.${DOMAIN}"
+    host: "${APP}.${DOMAIN}"
     path: /pulp/container/
     port:
       targetPort: content-24816
@@ -807,7 +847,7 @@ objects:
       pulp_cr: example-pulp
     name: example-pulp-container-token
   spec:
-    host: "example-pulp.${DOMAIN}"
+    host: "${APP}.${DOMAIN}"
     path: /token/
     port:
       targetPort: api-24817
@@ -829,7 +869,7 @@ objects:
       pulp_cr: example-pulp
     name: example-pulp-container-v2
   spec:
-    host: "example-pulp.${DOMAIN}"
+    host: "${APP}.${DOMAIN}"
     path: /v2/
     port:
       targetPort: api-24817
@@ -851,7 +891,7 @@ objects:
       pulp_cr: example-pulp
     name: example-pulp-content
   spec:
-    host: "example-pulp.${DOMAIN}"
+    host: "${APP}.${DOMAIN}"
     path: /pulp/content/
     port:
       targetPort: content-24816
@@ -873,7 +913,7 @@ objects:
       pulp_cr: example-pulp
     name: example-pulp-python-pypi
   spec:
-    host: "example-pulp.${DOMAIN}"
+    host: "${APP}.${DOMAIN}"
     path: /pypi/
     port:
       targetPort: api-24817
@@ -894,4 +934,18 @@ parameters:
 
     $ oc get ingresses.config/cluster -o jsonpath={.spec.domain}
   value: apps-crc.testing
+  required: true
+- name: APP
+  displayName: |-
+    Subdomain name that will be used as part of URL to access pulp (for example: my-app.my-domain.com)
+  description: |-
+    Subdomain name that will be used as part of URL to access pulp (for example: my-app.my-domain.com)
+  generate: expression
+  from: "pulp-[a-z0-9]{5}"
+- name: OBJECT_STORAGE_HOST
+  displayName: |-
+    Address of object storage.
+  description: |-
+    Address of object storage.
+  value: http://test.com
   required: true
