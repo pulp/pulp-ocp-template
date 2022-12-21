@@ -684,7 +684,7 @@ objects:
       DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
       MEDIA_ROOT = ""
       ALLOWED_CONTENT_CHECKSUMS = ["sha1","sha256"]
-      AWS_S3_ENDPOINT_URL = "${OBJECT_STORAGE_HOST}"
+      AWS_S3_ENDPOINT_URL = "http://${MINIO_APP}.${DOMAIN}"
   kind: Secret
   metadata:
     name: example-pulp-server
@@ -909,6 +909,7 @@ objects:
       name: example-pulp-api-svc
       weight: 100
     wildcardPolicy: None
+# The following objects are copied from https://github.com/elmanytas/minio-openshift/blob/master/minio-template.yaml
 - apiVersion: v1
   kind: Secret
   metadata:
@@ -927,9 +928,21 @@ objects:
     ports:
     - name: ${NAME}
       port: 9000
+      protocol: TCP
       targetPort: 9000
     selector:
       app: ${NAME}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${NAME}
+  spec:
+    host: "${MINIO_APP}.${DOMAIN}"
+    port:
+      targetPort: ${NAME}
+    to:
+      kind: Service
+      name: ${NAME}
 - apiVersion: apps/v1
   kind: StatefulSet
   metadata:
@@ -1007,17 +1020,18 @@ parameters:
     Subdomain name that will be used as part of URL to access pulp (for example: my-app.my-domain.com)
   generate: expression
   from: "pulp-[a-z0-9]{5}"
-- name: OBJECT_STORAGE_HOST
-  displayName: |-
-    Address of object storage.
-  description: |-
-    Address of object storage.
-  value: "http://minio:9000"
-  required: true
 - description: Pulp Admin Password
   name: PULP_ADMIN_PASSWORD
   value: password
   required: true
+- name: MINIO_APP
+  displayName: |-
+    Subdomain name that will be used as part of URL to access minio (for example: my-minio.my-domain.com)
+  description: |-
+    Subdomain name that will be used as part of URL to access minio (for example: my-minio.my-domain.com)
+  generate: expression
+  from: "minio-[a-z0-9]{5}"
+# The following parameters are copied from https://github.com/elmanytas/minio-openshift/blob/master/minio-template.yaml
 - description: The name assigned to all of the frontend objects defined in this template.
   displayName: Name
   name: NAME
