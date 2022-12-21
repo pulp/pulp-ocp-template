@@ -673,8 +673,8 @@ objects:
       TOKEN_SERVER = "http://example-pulp-api-svc.pulp.svc.cluster.local:24817/token/"
       TOKEN_SIGNATURE_ALGORITHM = "ES256"
       API_ROOT = "/pulp/"
-      AWS_ACCESS_KEY_ID = 'AKIAIT2Z5TDYPX3ARJBA'
-      AWS_SECRET_ACCESS_KEY = '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'
+      AWS_ACCESS_KEY_ID = '${MINIO_ACCESS_KEY}'
+      AWS_SECRET_ACCESS_KEY = '${MINIO_SECRET_KEY}'
       AWS_STORAGE_BUCKET_NAME = 'pulp3'
       AWS_S3_REGION_NAME = 'us-east-1'
       AWS_DEFAULT_ACL = "@none None"
