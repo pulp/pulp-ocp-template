@@ -608,8 +608,8 @@ objects:
         partition: 0
       type: RollingUpdate
 - apiVersion: v1
-  data:
-    password: cGFzc3dvcmQ=
+  stringData:
+    password: "${PULP_ADMIN_PASSWORD}"
   kind: Secret
   metadata:
     name: example-pulp-admin-password
@@ -1013,6 +1013,10 @@ parameters:
   description: |-
     Address of object storage.
   value: "http://minio:9000"
+  required: true
+- description: Pulp Admin Password
+  name: PULP_ADMIN_PASSWORD
+  value: password
   required: true
 - description: The name assigned to all of the frontend objects defined in this template.
   displayName: Name
