@@ -221,10 +221,6 @@ objects:
             name: example-pulp-db-fields-encryption
             readOnly: true
             subPath: database_fields.symmetric.key
-          - mountPath: /var/lib/pulp/tmp
-            name: tmp-file-storage
-          - mountPath: /var/lib/pulp/assets
-            name: assets-file-storage
           - mountPath: /etc/pulp/keys/container_auth_private_key.pem
             name: example-pulp-container-auth-certs
             readOnly: true
@@ -262,10 +258,6 @@ objects:
             - key: database_fields.symmetric.key
               path: database_fields.symmetric.key
             secretName: example-pulp-db-fields-encryption
-        - emptyDir: {}
-          name: tmp-file-storage
-        - emptyDir: {}
-          name: assets-file-storage
         - name: example-pulp-container-auth-certs
           secret:
             defaultMode: 420
@@ -361,8 +353,6 @@ objects:
             name: example-pulp-db-fields-encryption
             readOnly: true
             subPath: database_fields.symmetric.key
-          - mountPath: /var/lib/pulp/tmp
-            name: tmp-file-storage
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
@@ -385,8 +375,6 @@ objects:
             - key: database_fields.symmetric.key
               path: database_fields.symmetric.key
             secretName: example-pulp-db-fields-encryption
-        - emptyDir: {}
-          name: tmp-file-storage
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
@@ -465,8 +453,6 @@ objects:
             name: example-pulp-db-fields-encryption
             readOnly: true
             subPath: database_fields.symmetric.key
-          - mountPath: /var/lib/pulp/tmp
-            name: tmp-file-storage
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
@@ -491,8 +477,6 @@ objects:
             secretName: example-pulp-db-fields-encryption
         - emptyDir: {}
           name: example-pulp-ansible-tmp
-        - emptyDir: {}
-          name: tmp-file-storage
 - apiVersion: apps/v1
   kind: StatefulSet
   metadata:
