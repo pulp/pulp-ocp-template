@@ -669,11 +669,11 @@ objects:
       CONTENT_ORIGIN = "https://${APP}.${DOMAIN}"
       DATABASES = {
               'default': {
-                      'HOST': 'postgres.db.svc.cluster.local',
+                      'HOST': 'example-pulp-database-svc',
                       'ENGINE': 'django.db.backends.postgresql_psycopg2',
                       'NAME': 'pulp',
-                      'USER': 'pulp-admin',
-                      'PASSWORD': 'password',
+                      'USER': 'pulp',
+                      'PASSWORD': 'B0JSGKmxAdNhDnqrucZpkudW5Ep6P3I3',
                       'PORT': '5432',
                       'CONN_MAX_AGE': 0,
                       'OPTIONS': { 'sslmode': 'prefer' },
@@ -686,7 +686,7 @@ objects:
       PUBLIC_KEY_PATH = "/etc/pulp/keys/container_auth_public_key.pem"
       STATIC_ROOT = "/var/lib/operator/static/"
       TOKEN_AUTH_DISABLED = "False"
-      TOKEN_SERVER = "http://pulp-api-svc.pulp.svc.cluster.local:24817/token/"
+      TOKEN_SERVER = "http://example-pulp-api-svc.pulp.svc.cluster.local:24817/token/"
       TOKEN_SIGNATURE_ALGORITHM = "ES256"
       API_ROOT = "/pulp/"
       AWS_ACCESS_KEY_ID = 'AKIAIT2Z5TDYPX3ARJBA'
