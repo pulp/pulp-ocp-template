@@ -1,0 +1,47 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  app: pulp-example
+  template: pulp-example-bundle
+metadata:
+  annotations:
+    description: |-
+      A quick way to test and try Pulp running in OpenShift clusters.
+
+      WARNING: Any data stored will be lost upon pod destruction. Only use this template for testing.
+    openshift.io/display-name: Pulp (Ephemeral)
+    openshift.io/documentation-url: https://docs.pulpproject.org/pulpcore/
+    openshift.io/long-description: This template installs pulp-operator
+      from OLM community catalog.
+    openshift.io/support-url: https://github.com/pulp/pulp-operator/issues
+    samples.operator.openshift.io/version: 4.10.12
+    tags: quickstart,pulp
+    template.openshift.io/bindable: "false"
+    iconClass: icon-python
+  labels:
+    samples.operator.openshift.io/managed: "false"
+  name: pulp-example-bundle
+  namespace: openshift
+objects:
+- apiVersion: operators.coreos.com/v1
+  kind: OperatorGroup
+  metadata:
+    name: pulp-operator-group
+    namespace: pulp
+  spec:
+    targetNamespaces:
+    - pulp
+- apiVersion: operators.coreos.com/v1alpha1
+  kind: Subscription
+  metadata:
+    labels:
+      operators.coreos.com/pulp-operator.pulp: ""
+    name: pulp-operator
+    namespace: pulp
+  spec:
+    channel: alpha
+    installPlanApproval: Automatic
+    name: pulp-operator
+    source: community-operators
+    sourceNamespace: openshift-marketplace
+
